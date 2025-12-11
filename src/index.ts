@@ -1,0 +1,41 @@
+/**
+ * A replacement for process.exit that ensures stdio are fully drained before exiting.
+ * Required for Node 0.8-0.10 compatibility where process.exit() could truncate output.
+ *
+ * @param exitCode - The exit code to pass to process.exit()
+ */
+export default function exit(exitCode: number): void {
+  var streams = [process.stdout, process.stderr];
+  var drainCount = 0;
+
+  // Actually exit if all streams are drained
+  function tryToExit(): void {
+    if (drainCount === streams.length) {
+      process.exit(exitCode);
+    }
+  }
+
+  streams.forEach((stream) => {
+    // Count drained streams now, but monitor non-drained streams
+    if (stream.bufferSize === 0) {
+      drainCount++;
+    } else {
+      stream.write('', 'utf-8', () => {
+        drainCount++;
+        tryToExit();
+      });
+    }
+    // Prevent further writing
+    stream.write = () => true;
+  });
+
+  // If all streams were already drained, exit now
+  tryToExit();
+
+  // In Windows, when run as a Node.js child process, a script utilizing
+  // this library might just exit with a 0 exit code, regardless. This code,
+  // despite the fact that it looks a bit crazy, appears to fix that.
+  process.on('exit', () => {
+    process.exit(exitCode);
+  });
+}
