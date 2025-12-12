@@ -5,8 +5,8 @@
  * @param exitCode - The exit code to pass to process.exit()
  */
 export default function exit(exitCode: number): void {
-  var streams = [process.stdout, process.stderr];
-  var drainCount = 0;
+  const streams = [process.stdout, process.stderr];
+  let drainCount = 0;
 
   // Actually exit if all streams are drained
   function tryToExit(): void {
