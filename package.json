@@ -1,6 +1,6 @@
 {
   "name": "exit-compat",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A replacement for process.exit that ensures stdio are fully drained before exiting",
   "keywords": [
     "exit",
