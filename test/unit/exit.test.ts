@@ -6,21 +6,21 @@ import { exec } from 'child_process';
 import path from 'path';
 import url from 'url';
 
-var __dirname = path.dirname(typeof __filename !== 'undefined' ? __filename : url.fileURLToPath(import.meta.url));
-var fixturesPath = path.join(__dirname, '..', 'fixtures');
+const __dirname = path.dirname(typeof __filename !== 'undefined' ? __filename : url.fileURLToPath(import.meta.url));
+const fixturesPath = path.join(__dirname, '..', 'fixtures');
 
 function run(command: string, callback: (code: number, stdout: string) => void): void {
   exec(command, { cwd: fixturesPath }, (error, stdout) => {
-    var code = error ? (error as NodeJS.ErrnoException & { code: number }).code : 0;
+    const code = error ? (error as NodeJS.ErrnoException & { code: number }).code : 0;
     // Normalize line endings for cross-platform compatibility
-    var normalizedStdout = stdout.replace(/\r?\n/g, '\n');
+    const normalizedStdout = stdout.replace(/\r?\n/g, '\n');
     callback(code, normalizedStdout);
   });
 }
 
 function generateExpected(count: number, modes: string[]): string {
-  var lines: string[] = [];
-  for (var i = 0; i < count; i++) {
+  const lines: string[] = [];
+  for (let i = 0; i < count; i++) {
     if (modes.indexOf('stdout') !== -1) lines.push(`stdout ${i}`);
     if (modes.indexOf('stderr') !== -1) lines.push(`stderr ${i}`);
   }
@@ -29,7 +29,7 @@ function generateExpected(count: number, modes: string[]): string {
 
 describe('exit', () => {
   describe('exit codes', () => {
-    var codes = [0, 1, 123];
+    const codes = [0, 1, 123];
 
     codes.forEach((expectedCode) => {
       it(`should exit with code ${expectedCode}`, (done) => {
@@ -42,15 +42,15 @@ describe('exit', () => {
   });
 
   describe('output draining', () => {
-    var counts = [10, 100, 1000];
-    var outputModes = [['stdout', 'stderr'], ['stdout'], ['stderr']];
+    const counts = [10, 100, 1000];
+    const outputModes = [['stdout', 'stderr'], ['stdout'], ['stderr']];
 
     counts.forEach((count) => {
       outputModes.forEach((modes) => {
-        var modesStr = modes.join(' ');
+        const modesStr = modes.join(' ');
         it(`should drain ${count} lines to ${modesStr}`, (done) => {
           run(`node log.cjs 0 ${count} ${modesStr} 2>&1`, (_code, stdout) => {
-            var expected = generateExpected(count, modes);
+            const expected = generateExpected(count, modes);
             // Check length matches (output order may vary on Windows)
             assert.equal(stdout.length, expected.length, 'output length should match');
             // Verify "fail" never appears (code after exit should not run)
