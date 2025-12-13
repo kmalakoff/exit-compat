@@ -1,3 +1,5 @@
+// Adapted from https://github.com/cowboy/node-exit
+
 /**
  * A replacement for process.exit that ensures stdio are fully drained before exiting.
  * Required for Node 0.8-0.10 compatibility where process.exit() could truncate output.
@@ -26,7 +28,7 @@ export default function exit(exitCode: number): void {
       });
     }
     // Prevent further writing
-    stream.write = () => true;
+    stream.write = () => undefined;
   });
 
   // If all streams were already drained, exit now
