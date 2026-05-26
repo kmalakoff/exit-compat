@@ -28,7 +28,7 @@ export default function exit(exitCode: number): void {
       });
     }
     // Prevent further writing
-    stream.write = () => undefined;
+    stream.write = () => false;
   });
 
   // If all streams were already drained, exit now
