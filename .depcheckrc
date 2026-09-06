@@ -1,1 +1,1 @@
-ignores: ["node-version-use", "ts-dev-stack", "async-compat"]
+ignores: ["exit-compat", "node-version-use", "ts-dev-stack", "async-compat"]
