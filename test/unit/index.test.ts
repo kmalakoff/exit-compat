@@ -11,7 +11,8 @@ const fixturesPath = path.join(__dirname, '..', 'fixtures');
 
 function run(command: string, callback: (code: number, stdout: string) => void): void {
   exec(command, { cwd: fixturesPath }, (error, stdout) => {
-    const code = error ? (error as NodeJS.ErrnoException & { code: number }).code : 0;
+    // ExecException.code is number | string: a numeric exit status, or an errno for spawn failures.
+    const code = error ? (typeof error.code === 'number' ? error.code : 1) : 0;
     // Normalize line endings for cross-platform compatibility
     const normalizedStdout = stdout.replace(/\r?\n/g, '\n');
     callback(code, normalizedStdout);
